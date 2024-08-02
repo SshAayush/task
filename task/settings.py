@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import Config, RepositoryEnv
 
@@ -18,6 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMPLATE_DIR = Path(BASE_DIR/'templates')
 STATIC_DIR = Path(BASE_DIR/'static')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 config = Config(RepositoryEnv('.env'))
 
