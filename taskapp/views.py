@@ -1,7 +1,7 @@
 from urllib import response
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render, get_object_or_404
-from .forms import RegistrationForm,ProfilePictureForm
+from .forms import RegistrationForm,ProfilePictureForm, UserProfileForm, UserUpdateForm
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -64,38 +64,38 @@ def profile(request):
                 form.save()
                 messages.success(request, 'Profile picture updated successfully')
             else:
-                messages.error(request, 'Failed to upload image')
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        if isinstance(error, str):
+                            messages.error(request, f"{field.capitalize()}: {error}")
+                        else:
+                            messages.error(request, f"{field.capitalize()}: Invalid data")
+
                 
         username = request.POST.get('username', '').strip()
         # check whether the username is filled or not
         if username:
-            # username = request.POST['username']
-            first_name = request.POST['first_name']
-            last_name = request.POST['last_name']
-            company_name = request.POST['company_name']
-            location = request.POST['location']
-            email = request.POST['email']
-            birthdate = request.POST['birthdate']
-            phone = request.POST['phone']
+            user_form = UserUpdateForm(request.POST, instance=user)
+            profile_form = UserProfileForm(request.POST, instance=additionalUserDetail)
+
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                messages.success(request, 'Profile updated successfully')
+                return redirect('profile')
+            else:
+                # send form errors and add them to messages
+                for form in [user_form, profile_form]:
+                    for field, errors in form.errors.items():
+                        for error in errors:
+                            if isinstance(error, str):
+                                messages.error(request, f"{field.capitalize()}: {error}")
+                            else:
+                                messages.error(request, f"{field.capitalize()}: Invalid data")
+    
+        # user_form = UserUpdateForm(instance=user)
+        # profile_form = UserProfileForm(instance=additionalUserDetail)
             
-            #to update the user details
-            user = User.objects.get(username=request.user)
-            # user.username = username
-            user.first_name = first_name
-            user.last_name = last_name
-            user.email = email
-            user.save()
-            
-            #to update the additional details of the user
-            try:
-                additionalUserDetail = UserProfile.objects.get(user=request.user)
-                additionalUserDetail.company_name = company_name
-                additionalUserDetail.location = location
-                additionalUserDetail.birthdate = birthdate
-                additionalUserDetail.phone = phone
-                additionalUserDetail.save()
-            except UserProfile.DoesNotExist:
-                UserProfile.objects.create(user=request.user, company_name=company_name, location=location, birthdate=birthdate, phone=phone)
         return redirect('profile')
                 
     form = ProfilePictureForm(instance=request.user.userprofile)
