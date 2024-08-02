@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup</title>
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}" />
+
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Ubuntu"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="path/to/font-awesome/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <div class="signupmain">
+      <p class="sign" align="center">Signup</p>
+      <form action="{% url 'signup' %}" method="post">
+        {% csrf_token %} {% for field in form %}
+        <div class="un">
+          <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+          {{ field }} {% if field.errors %}
+          <div class="form-errors">
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <button class="submit" type="submit">SignUp</button>
+    </form>
+    <p align="center"><a href="{% url 'login' %}"><span style="color:black;">Already have an account? </span>Login</p>
+    </div>
+  </body>
+</html>
