@@ -1,8 +1,8 @@
 from urllib import response
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render, get_object_or_404
-from .forms import RegistrationForm,ProfilePictureForm, UserProfileForm, UserUpdateForm
-from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
+from .forms import RegistrationForm,ProfilePictureForm, UserProfileForm, UserUpdateForm, CustomPasswordChangeForm
+from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import UserProfile
@@ -106,11 +106,25 @@ def profile(request):
         'status':status,
         'form':form,
     })
-
+    
 # to change the password by user
 @login_required
 def security(request):
-    return render(request,'security.html')
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('profile')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{form.fields[field].label}: {error}")
+    else:
+        form = CustomPasswordChangeForm(request.user)
+    
+    return render(request, 'security.html', {'form': form})
 
 #to list all the users in the system
 @login_required

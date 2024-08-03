@@ -1,7 +1,8 @@
 import datetime
+import re
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm,PasswordChangeForm
 from .models import UserProfile
 
 class RegistrationForm(UserCreationForm):
@@ -56,7 +57,6 @@ class UserProfileForm(forms.ModelForm):
             raise forms.ValidationError("Location cannot be empty.")
         return location
 
-
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
@@ -73,3 +73,34 @@ class UserUpdateForm(forms.ModelForm):
         if User.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
             raise forms.ValidationError("This email is already in use.")
         return email
+    
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label="Current Password",
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter current password'}),
+    )
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter new password'}),
+    )
+    new_password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm new password'}),
+    )
+
+    def clean_new_password1(self):
+        new_password1 = self.cleaned_data.get('new_password1')
+        if len(new_password1) < 8:
+            raise forms.ValidationError("The new password must be at least 8 characters long.")
+        if not re.findall(r'\d', new_password1):
+            raise forms.ValidationError("The new password must contain at least one digit.")
+        if not re.findall(r'[A-Za-z]', new_password1):
+            raise forms.ValidationError("The new password must contain at least one letter.")
+        return new_password1
+
+    def clean_new_password2(self):
+        new_password1 = self.cleaned_data.get('new_password1')
+        new_password2 = self.cleaned_data.get('new_password2')
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            raise forms.ValidationError("The two password fields must match.")
+        return new_password2

@@ -25,7 +25,25 @@
           <div class="card mb-4">
         <div class="card-header">Change Password</div>
             <div class="card-body">
-              <form>
+              <form aqction="{% url 'security' %}" method="POST">
+                {% csrf_token %}
+                <!--Alert-->
+                <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+                  {% if messages %}
+                    {% for message in messages %}
+                      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                          <strong class="me-auto">Notification</strong>
+                          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                          {{ message }}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+
                 <!-- Form Group (current password)-->
                 <div class="mb-3">
                   <label class="small mb-1" for="currentPassword"
@@ -35,6 +53,7 @@
                     class="form-control"
                     id="currentPassword"
                     type="password"
+                    name="old_password"
                     placeholder="Enter current password"
                   />
                 </div>
@@ -47,6 +66,7 @@
                     class="form-control"
                     id="newPassword"
                     type="password"
+                    name="new_password1"
                     placeholder="Enter new password"
                   />
                 </div>
@@ -59,10 +79,11 @@
                     class="form-control"
                     id="confirmPassword"
                     type="password"
+                    name="new_password2"
                     placeholder="Confirm new password"
                   />
                 </div>
-                <button class="btn btn-primary" type="button">Save</button>
+                <button class="btn btn-primary" type="Submit">Save</button>
               </form>
             </div>
         </div>
@@ -96,5 +117,15 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toastContainer = document.getElementById('toast-container');
+        var toasts = toastContainer.getElementsByClassName('toast');
+        for (var i = 0; i < toasts.length; i++) {
+          var toast = new bootstrap.Toast(toasts[i]);
+          toast.show();
+        }
+      });
+    </script> 
   </body>
 </html>
