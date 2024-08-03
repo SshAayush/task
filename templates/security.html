@@ -101,9 +101,16 @@
                             undone. If you are sure you want to delete your account, select
                             the button below.
                         </p>
-                        <button class="btn btn-danger-soft text-danger" type="button">
-                            I understand, delete my account
-                        </button>
+                        <form
+                          method="POST"
+                          action="{% url 'deleteuser' user.id %}"
+                          style="display: inline"
+                        >
+                          {% csrf_token %}
+                          <button class="btn btn-danger-soft text-danger" type="submit">
+                              I understand, delete my account
+                          </button>
+                        </form>
                     </div>
                 </div>  
             </div>

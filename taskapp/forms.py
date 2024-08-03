@@ -20,7 +20,7 @@ class ProfilePictureForm(forms.ModelForm):
     def clean_profile_picture(self):
         picture = self.cleaned_data.get('profile_picture')
         if picture:
-            if picture.size > 5 * 1024 * 1024:  # set 5 MB limit
+            if picture.size > 5 * 1024 * 1024:  # set 5 MB limit for image size
                 raise forms.ValidationError("Image file too large ( > 5MB )")
             if not picture.content_type in ['image/jpeg', 'image/png']:
                 raise forms.ValidationError("Image must be in JPG or PNG format")

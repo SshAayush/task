@@ -114,7 +114,7 @@ def security(request):
         form = CustomPasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+            update_session_auth_hash(request, user)  # To keep the user logged in after password change
             messages.success(request, 'Your password was successfully updated!')
             return redirect('profile')
         else:
@@ -143,10 +143,13 @@ def viewUser(request):
 # function to delete a user by id
 @login_required
 def deleteUser(request, user_id):
-    if request.user.is_superuser:
+    currentUser = User.objects.get(username=request.user)
+    if request.user.is_superuser or currentUser.id == user_id: #only superuser can delete other users and user can delete himself
         if request.method == 'POST':
             user = get_object_or_404(User, id=user_id)
             user.delete()
+            if currentUser.id == user_id: #return to login page if the user deletes himself
+                return redirect('logout')
             return redirect('viewuser')
         elif request.method == 'GET':
             return HttpResponseForbidden("You are not allowed to delete this user.")
@@ -163,3 +166,4 @@ def editUser(request, user_id):
         return render(request, 'edituser.html', {
             'form': form,
         })
+    return redirect('profile')
