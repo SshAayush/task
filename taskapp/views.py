@@ -155,15 +155,52 @@ def deleteUser(request, user_id):
             return HttpResponseForbidden("You are not allowed to delete this user.")
     return redirect('viewuser')
 
+# used to redirect to user edit page with respective user details
 @login_required
-def editUser(request, user_id):
-    if request.user.is_staff and request.user.is_superuser:
-        user = get_object_or_404(User, id=user_id)
-        if request.method == 'POST':
-            return HttpResponse("Edit user POST request Invoked") #Incomplete
-        else:
-            form = RegistrationForm(instance=user)
-        return render(request, 'edituser.html', {
-            'form': form,
+def viewUserEdit(request,user_id):
+    if request.user.is_staff or request.user.is_superuser:
+        user = User.objects.get(id=user_id)
+        try:
+        # access the additional details of the user from models
+            additionalUserDetail = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            additionalUserDetail = None 
+        return render(request, 'edituser.html',{
+            'userDetail': user,
+            'additionalDetail': additionalUserDetail,
         })
     return redirect('profile')
+
+@login_required
+def editUser(request, user_id):
+    if request.user.is_staff or request.user.is_superuser:
+        user = get_object_or_404(User, id=user_id)
+        try:
+            additionalUserDetail = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            additionalUserDetail = None
+
+        if request.method == 'POST':
+            user_form = UserUpdateForm(request.POST, instance=user)
+            profile_form = UserProfileForm(request.POST, request.FILES, instance=additionalUserDetail)
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                messages.success(request, 'User details updated successfully.')
+                return redirect('viewuseredit', user_id=user_id)
+            else:
+                for field, errors in user_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
+                for field, errors in profile_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
+        else:
+            user_form = UserUpdateForm(instance=user)
+            profile_form = UserProfileForm(instance=additionalUserDetail)
+
+        return render(request, 'edituser.html', {
+            'userDetail': user,
+            'additionalDetail': additionalUserDetail,
+        })
+    return redirect('viewuseredit', user_id=user_id)

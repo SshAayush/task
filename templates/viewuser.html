@@ -24,7 +24,7 @@
           id="company-detail-content"
           class="company-detail-content container"
         >
-          <h3>Company Master</h3>
+          <h3>Manage User</h3>
           <table class="table table-hover">
             <thead>
               <tr>
@@ -46,7 +46,7 @@
                 <td>
                   <form
                     method="POST"
-                    action="{% url 'edituser' user.id %}"
+                    action="{% url 'viewuseredit' user.id %}"
                     style="display: inline"
                   >
                     {% csrf_token %}
