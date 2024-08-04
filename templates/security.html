@@ -87,34 +87,44 @@
               </form>
             </div>
         </div>
-          <!-- Security preferences card-->
-            <div class="card mb-4">
-                
-            </div>
           <!-- Delete account card-->
-            <div class=" ">
+          <div class="container mt-5">
             <div class="card mb-4">
                 <div class="card-header">Delete Account</div>
-                    <div class="card-body">
-                        <p>
-                            Deleting your account is a permanent action and cannot be
-                            undone. If you are sure you want to delete your account, select
-                            the button below.
-                        </p>
-                        <form
-                          method="POST"
-                          action="{% url 'deleteuser' user.id %}"
-                          style="display: inline"
-                        >
-                          {% csrf_token %}
-                          <button class="btn btn-danger-soft text-danger" type="submit">
-                              I understand, delete my account
-                          </button>
+                <div class="card-body">
+                    <p>
+                        Deleting your account is a permanent action and cannot be
+                        undone. If you are sure you want to delete your account, select
+                        the button below.
+                    </p>
+                    <!-- Trigger Button for Modal -->
+                    <button class="btn btn-danger-soft text-danger" type="button" data-toggle="modal" data-target="#deleteAccountModal">
+                        I understand, delete my account
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Modal Structure -->
+        <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete your account? This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <form method="POST" action="{% url 'deleteuser' user.id %}" style="display: inline">
+                            {% csrf_token %}
+                            <button class="btn btn-danger" type="submit">Yes, delete my account</button>
                         </form>
                     </div>
-                </div>  
+                </div>
             </div>
-            </div>
+        </div>
         </div>
       </div>
         </div>
@@ -134,5 +144,7 @@
         }
       });
     </script> 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
