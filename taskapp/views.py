@@ -1,4 +1,3 @@
-from urllib import response
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import RegistrationForm,ProfilePictureForm, UserProfileForm, UserUpdateForm, CustomPasswordChangeForm
@@ -8,6 +7,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 from django.contrib import messages
 # Create your views here.
+
 def signup(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
