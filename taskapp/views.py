@@ -13,7 +13,7 @@ def signup(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            message = "User created successfully"
+            messages.success(request, 'User created successfully')
             return redirect('login')
         else:
             message = form.errors

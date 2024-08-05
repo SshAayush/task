@@ -8,6 +8,8 @@
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}" />
 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
     <link
       href="https://fonts.googleapis.com/css?family=Ubuntu"
       rel="stylesheet"
@@ -19,6 +21,22 @@
     />
   </head>
   <body>
+      {% if messages %}
+          <div class="position-fixed top-0 end-0 p-3" style="z-index: 11;position: fixed;top: 1rem;right: 1rem;z-index: 1050; ">
+            {% for message in messages %}
+              <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+                <div class="toast-header">
+                  <strong class="me-auto">Notification</strong>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="toast-body">
+                  {{ message }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
     <div class="main">
       <p class="sign" align="center">Sign in</p>
       <form action="{% url 'login' %}" method="POST">
@@ -46,5 +64,13 @@
       </form>
       <p align="center"><a href="{% url 'signup' %}"><span style="color:black;">Crate an account? </span>Signup</p>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('.toast').toast('show');
+      });
+    </script>
   </body>
 </html>

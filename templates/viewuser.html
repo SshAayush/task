@@ -69,23 +69,48 @@
                 {% if currentUser.is_superuser %}
                 <td>
                   <form
-                    method="POST"
-                    action="{% url 'deleteuser' user.id %}"
-                    style="display: inline"
+                  method="POST"
+                  action="{% url 'deleteuser' user.id %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+                  <button
+                    type="button"
+                    data-toggle="modal"
+                    data-target="#deleteModal"
+                    style="background: none; border: none; padding: 0; cursor: pointer;"
                   >
-                    {% csrf_token %}
-                    <button
-                      type="submit"
-                      style="
-                        background: none;
-                        border: none;
-                        padding: 0;
-                        cursor: pointer;
-                      "
-                    >
-                      <i class="fa-solid fa-trash" style="color: #212529"></i>
-                    </button>
-                  </form>
+                    <i class="fa-solid fa-trash" style="color: #212529"></i>
+                  </button>
+                </form>
+              
+                <div
+                  class="modal fade"
+                  id="deleteModal"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="deleteModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to delete this account?
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <form method="POST" action="{% url 'deleteuser' user.id %}" style="display: inline">
+                          {% csrf_token %}
+                          <button class="btn btn-danger" type="submit">Yes, delete account</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </td>
                 {% endif %}
               </tr>
@@ -95,6 +120,17 @@
         </div>
       </div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const confirmDeleteButton = document.getElementById("confirmDelete");
+        const deleteForm = document.querySelector("form[method='POST']");
+  
+        confirmDeleteButton.addEventListener("click", function () {
+          deleteForm.submit();
+        });
+      });
+    </script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -104,5 +140,7 @@
       src="https://kit.fontawesome.com/e6970b99f7.js"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>

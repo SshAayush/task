@@ -31,12 +31,12 @@
                 <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1100;">
                   {% if messages %}
                     {% for message in messages %}
-                      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                      <div class="toast" role="alert" data-delay = "3000" aria-live="assertive" aria-atomic="true">
                         <div class="toast-header">
                           <strong class="me-auto">Notification</strong>
                           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
-                        <div class="toast-body">
+                        <div class="toast-body" data-delay = "3000">
                           {{ message }}
                         </div>
                       </div>
