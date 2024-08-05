@@ -7,10 +7,22 @@ from .models import UserProfile
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    
+
     class Meta:
         model = User
-        fields = ['username', 'email','first_name','last_name', 'password1', 'password2']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if not re.match("^[a-zA-Z]+$", first_name):
+            raise forms.ValidationError("First name should not contain numbers or special characters.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if not re.match("^[a-zA-Z]+$", last_name):
+            raise forms.ValidationError("Last name should not contain numbers or special characters.")
+        return last_name
 
 class ProfilePictureForm(forms.ModelForm):
     class Meta:
@@ -37,6 +49,8 @@ class UserProfileForm(forms.ModelForm):
             phone = str(phone).strip()
         if phone and not phone.isdigit():
             raise forms.ValidationError("Phone number should contain only digits.")
+        if phone and len(phone) != 10:
+            raise forms.ValidationError("Phone number should be exactly 10 digits.")
         return phone
     
     def clean_birthdate(self):
