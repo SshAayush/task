@@ -129,7 +129,7 @@ def security(request):
 #to list all the users in the system
 @login_required
 def viewUser(request):
-    if not request.user.is_staff:
+    if not request.user.is_staff or not request.user.is_superuser:
         return HttpResponseForbidden("You are not allowed to access this page.")
     
     # Accessing the User model
